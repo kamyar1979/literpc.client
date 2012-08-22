@@ -9,14 +9,12 @@
 	/// <summary>
 	/// JsonRpc core class.It makes requests and send to the server and gets the response.
 	/// </summary>
-	public class JsonRpc
+	internal class JsonRpc
 	{
 		private const string MIME_JSON = "application/json";
 
 		private WebClient client;
 		private WebHeaderCollection headers;
-
-
 
 		/// <summary>
 		/// The address of the json-rpc server
@@ -31,6 +29,15 @@
 		/// Username/password of the service, when the authentication is basic.
 		/// </summary>
 		public ICredentials Credentials
+		{
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Json-Rpc domain name, for example in ticket.get, the domain name is tikcet.
+		/// </summary>
+		public string DomainName
 		{
 			get;
 			set;
@@ -66,6 +73,14 @@
 			this.Credentials = new NetworkCredential(username, password);
 		}
 
+		public JsonRpc(ServiceInfo serviceInfo)
+			: this()
+		{
+			this.Uri = serviceInfo.Uri.ToString();
+			this.Credentials = serviceInfo.Credential;
+			this.DomainName = serviceInfo.DomainName;
+		}
+
 		/// <summary>
 		/// The Core method which sends the request to the http server and returns the result and parses it into object.
 		/// </summary>
@@ -88,7 +103,7 @@
 				{
 					this.headers[HttpResponseHeader.SetCookie] = this.client.ResponseHeaders[HttpResponseHeader.SetCookie];
 				}
-				
+
 
 				if (json.error == null)
 				{
@@ -152,7 +167,7 @@
 		internal object DoRequest(string name, Type returnType, params object[] args)
 		{
 			using (this.client = new WebClient())
-			{				
+			{
 				if (headers != null)
 				{
 					client.Headers[HttpRequestHeader.Cookie] = headers[HttpResponseHeader.SetCookie];
@@ -161,7 +176,7 @@
 				client.Encoding = Encoding.UTF8;
 
 				this.client.Credentials = this.Credentials;
-				
+
 
 				dynamic json = JsonSerializer.DeserializeFromString(this.client.UploadString(this.Uri, JsonSerializer.SerializeToString(new { method = name, @params = args })), typeof(JsonRpcResult<>).MakeGenericType(returnType));
 				if (this.headers == null)

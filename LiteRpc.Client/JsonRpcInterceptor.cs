@@ -1,8 +1,6 @@
 ﻿namespace LiteRpc.Client
 {
 	using System.Collections.Generic;
-	using System.Configuration;
-	using System.Linq;
 	using Castle.DynamicProxy;
 
 	/// <summary>
@@ -26,13 +24,13 @@
 		/// <param name="invocation">object caontaining IoC method interceptor info.</param>
 		public void Intercept(IInvocation invocation)
 		{
-			var rpcAttrib = invocation.Method.DeclaringType.GetCustomAttributes(typeof(RpcAttribute), false).First() as RpcAttribute;
-			if (!rpc.ContainsKey(ConfigurationManager.AppSettings[rpcAttrib.UriSettingsKey]))
+			string key = Setup.ServiceParams[invocation.Method.DeclaringType].Uri.ToString();
+			if (!rpc.ContainsKey(key))
 			{
-				rpc[ConfigurationManager.AppSettings[rpcAttrib.UriSettingsKey]] = new JsonRpc(ConfigurationManager.AppSettings[rpcAttrib.UriSettingsKey]);
+				rpc[key] = new JsonRpc(Setup.ServiceParams[invocation.Method.DeclaringType]);
 			}
 			var name = invocation.Method.Name;
-			invocation.ReturnValue = rpc[ConfigurationManager.AppSettings[rpcAttrib.UriSettingsKey]].DoRequest(string.Concat(rpcAttrib.DomainName, ".", name), invocation.Method.ReturnType, invocation.Arguments);
+			invocation.ReturnValue = rpc[key].DoRequest(string.Concat(Setup.ServiceParams[invocation.Method.DeclaringType].DomainName, ".", name), invocation.Method.ReturnType, invocation.Arguments);
 		}
 	}
 }

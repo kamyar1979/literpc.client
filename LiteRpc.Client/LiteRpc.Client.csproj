@@ -51,6 +51,7 @@
     <Compile Include="JsonRpcInterceptor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RpcAttribute.cs" />
+    <Compile Include="ServiceInfo.cs" />
     <Compile Include="Setup.cs" />
   </ItemGroup>
   <ItemGroup>
