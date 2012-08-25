@@ -18,4 +18,21 @@
 		/// </summary>
 		public string DomainName { get; set; }
 	}
+	
+	/// <summary>
+	/// This attribute overrides the information of the parent interface to inner methods.
+	/// </summary>
+	[AttributeUsage(AttributeTargets.Method)]
+	public class RpcMethodAttribute : Attribute
+	{
+		/// <summary>
+		/// The domain which is not identical to the parent interface RPC attribute.
+		/// </summary>
+		public string DomainName { get; set; }
+
+		/// <summary>
+		/// real RPC method name which may not be the same as this method name.
+		/// </summary>
+		public string MethodName { get; set; }
+	}
 }

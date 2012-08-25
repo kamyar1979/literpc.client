@@ -4,7 +4,7 @@
 	using System.Collections.Generic;
 	using Castle.DynamicProxy;
 	using System.Configuration;
-using System.Net;
+	using System.Net;
 
 	public static class Setup
 	{
@@ -16,9 +16,9 @@ using System.Net;
 			ServiceParams = new Dictionary<Type, ServiceInfo>();
 		}
 
-		internal static Dictionary<Type,  ServiceInfo> ServiceParams  { get; set; }
+		internal static Dictionary<Type, ServiceInfo> ServiceParams { get; set; }
 
-		public static T CreateProxyFor<T>() where T:class
+		public static T CreateProxyFor<T>() where T : class
 		{
 			var proexyGen = new ProxyGenerator();
 			var info = new ServiceInfo();
@@ -48,6 +48,22 @@ using System.Net;
 			return result;
 		}
 
+		public static T CreateProxyFor<T>(Uri uri, string domainName) where T : class
+		{
+			T result = CreateProxyFor<T>();
+			ServiceParams[typeof(T)].Uri = uri;
+			ServiceParams[typeof(T)].DomainName = domainName;
+			return result;
+		}
+
+		public static T CreateProxyFor<T>(Uri uri, string domainName, ICredentials credentials) where T : class
+		{
+			T result = CreateProxyFor<T>();
+			ServiceParams[typeof(T)].Uri = uri;
+			ServiceParams[typeof(T)].DomainName = domainName;
+			ServiceParams[typeof(T)].Credential = credentials;
+			return result;
+		}
 
 		public static object CreateProxyFor(Type type)
 		{
@@ -79,6 +95,21 @@ using System.Net;
 			return result;
 		}
 
+		public static object CreateProxyFor(Type type, Uri uri, string domainName)
+		{
+			var result = CreateProxyFor(type);
+			ServiceParams[type].Uri = uri;
+			ServiceParams[type].DomainName = domainName;
+			return result;
+		}
 
+		public static object CreateProxyFor(Type type, Uri uri, string domainName, ICredentials credentials)
+		{
+			var result = CreateProxyFor(type);
+			ServiceParams[type].Uri = uri;
+			ServiceParams[type].DomainName = domainName;
+			ServiceParams[type].Credential = credentials;
+			return result;
+		}
 	}
 }
