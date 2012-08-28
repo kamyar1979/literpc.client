@@ -47,6 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DynamicTypeBuilder.cs" />
+    <Compile Include="Json.cs" />
     <Compile Include="JsonRpc.cs" />
     <Compile Include="JsonRpcInterceptor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

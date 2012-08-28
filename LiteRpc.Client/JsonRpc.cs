@@ -176,9 +176,16 @@
 				client.Encoding = Encoding.UTF8;
 
 				this.client.Credentials = this.Credentials;
+				dynamic json;
 
-
-				dynamic json = JsonSerializer.DeserializeFromString(this.client.UploadString(this.Uri, JsonSerializer.SerializeToString(new { method = name, @params = args })), typeof(JsonRpcResult<>).MakeGenericType(returnType));
+				if (returnType == typeof(object))
+				{
+					json = DynamicJson.Json.CreateObject(this.client.UploadString(this.Uri, JsonSerializer.SerializeToString(new { method = name, @params = args })));					
+				}
+				else
+				{
+					json = JsonSerializer.DeserializeFromString(this.client.UploadString(this.Uri, JsonSerializer.SerializeToString(new { method = name, @params = args })), typeof(JsonRpcResult<>).MakeGenericType(returnType));
+				}
 				if (this.headers == null)
 				{
 					this.headers = new WebHeaderCollection();
@@ -199,7 +206,6 @@
 				}
 			}
 		}
-
 	}
 
 	/// <summary>
