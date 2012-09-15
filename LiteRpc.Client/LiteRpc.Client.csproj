@@ -55,6 +55,7 @@
     <Compile Include="RpcAttribute.cs" />
     <Compile Include="ServiceInfo.cs" />
     <Compile Include="Setup.cs" />
+    <Compile Include="Singletone.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

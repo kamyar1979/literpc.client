@@ -20,25 +20,29 @@
 
 		public static T CreateProxyFor<T>() where T : class
 		{
-			var proexyGen = new ProxyGenerator();
-			var info = new ServiceInfo();
-
-			if (Attribute.IsDefined(typeof(T), typeof(RpcAttribute)))
+			if (Singletone<T>.Instance == null)
 			{
-				var rpcAttrib = Attribute.GetCustomAttribute(typeof(T), typeof(RpcAttribute), false) as RpcAttribute;
-				if (!string.IsNullOrEmpty(rpcAttrib.UriSettingsKey))
+				var proexyGen = new ProxyGenerator();
+				var info = new ServiceInfo();
+
+				if (Attribute.IsDefined(typeof(T), typeof(RpcAttribute)))
 				{
-					info.Uri = new Uri(ConfigurationManager.AppSettings[rpcAttrib.UriSettingsKey]);
+					var rpcAttrib = Attribute.GetCustomAttribute(typeof(T), typeof(RpcAttribute), false) as RpcAttribute;
+					if (!string.IsNullOrEmpty(rpcAttrib.UriSettingsKey))
+					{
+						info.Uri = new Uri(ConfigurationManager.AppSettings[rpcAttrib.UriSettingsKey]);
+					}
+					if (!string.IsNullOrEmpty(rpcAttrib.DomainName))
+					{
+						info.DomainName = rpcAttrib.DomainName;
+					}
 				}
-				if (!string.IsNullOrEmpty(rpcAttrib.DomainName))
-				{
-					info.DomainName = rpcAttrib.DomainName;
-				}
+
+				ServiceParams[typeof(T)] = info;
+
+				Singletone<T>.SetInstance(proexyGen.CreateInterfaceProxyWithoutTarget<T>(interceptor));			
 			}
-
-			ServiceParams[typeof(T)] = info;
-
-			return proexyGen.CreateInterfaceProxyWithoutTarget<T>(interceptor);
+			return Singletone<T>.Instance;
 		}
 
 		public static T CreateProxyFor<T>(ICredentials credentials) where T : class
@@ -67,25 +71,30 @@
 
 		public static object CreateProxyFor(Type type)
 		{
-			var proexyGen = new ProxyGenerator();
-			var info = new ServiceInfo();
-
-			if (Attribute.IsDefined(type, typeof(RpcAttribute)))
+			if (Singletone.Instance == null)
 			{
-				var rpcAttrib = Attribute.GetCustomAttribute(type, typeof(RpcAttribute), false) as RpcAttribute;
-				if (!string.IsNullOrEmpty(rpcAttrib.UriSettingsKey))
+
+				var proexyGen = new ProxyGenerator();
+				var info = new ServiceInfo();
+
+				if (Attribute.IsDefined(type, typeof(RpcAttribute)))
 				{
-					info.Uri = new Uri(ConfigurationManager.AppSettings[rpcAttrib.UriSettingsKey]);
+					var rpcAttrib = Attribute.GetCustomAttribute(type, typeof(RpcAttribute), false) as RpcAttribute;
+					if (!string.IsNullOrEmpty(rpcAttrib.UriSettingsKey))
+					{
+						info.Uri = new Uri(ConfigurationManager.AppSettings[rpcAttrib.UriSettingsKey]);
+					}
+					if (!string.IsNullOrEmpty(rpcAttrib.DomainName))
+					{
+						info.DomainName = rpcAttrib.DomainName;
+					}
 				}
-				if (!string.IsNullOrEmpty(rpcAttrib.DomainName))
-				{
-					info.DomainName = rpcAttrib.DomainName;
-				}
+
+				ServiceParams[type] = info;
+
+				Singletone.SetInstance(proexyGen.CreateInterfaceProxyWithoutTarget(type, interceptor));
 			}
-
-			ServiceParams[type] = info;
-
-			return proexyGen.CreateInterfaceProxyWithoutTarget(type, interceptor);
+			return Singletone.Instance;
 		}
 
 		public static object CreateProxyFor(Type type, ICredentials credentials)
