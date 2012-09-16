@@ -2,9 +2,9 @@
 {
 	using System;
 	using System.Collections.Generic;
-	using Castle.DynamicProxy;
 	using System.Configuration;
 	using System.Net;
+	using Castle.DynamicProxy;
 
 	public static class Setup
 	{
@@ -40,7 +40,7 @@
 
 				ServiceParams[typeof(T)] = info;
 
-				Singletone<T>.SetInstance(proexyGen.CreateInterfaceProxyWithoutTarget<T>(interceptor));			
+				Singletone<T>.SetInstance(proexyGen.CreateInterfaceProxyWithoutTarget<T>(interceptor));
 			}
 			return Singletone<T>.Instance;
 		}
@@ -70,10 +70,9 @@
 		}
 
 		public static object CreateProxyFor(Type type)
-		{
-			if (Singletone.Instance == null)
+		{			
+			if (Singletone.InstanceOf(type) == null)
 			{
-
 				var proexyGen = new ProxyGenerator();
 				var info = new ServiceInfo();
 
@@ -94,7 +93,7 @@
 
 				Singletone.SetInstance(proexyGen.CreateInterfaceProxyWithoutTarget(type, interceptor));
 			}
-			return Singletone.Instance;
+			return Singletone.InstanceOf(type);
 		}
 
 		public static object CreateProxyFor(Type type, ICredentials credentials)

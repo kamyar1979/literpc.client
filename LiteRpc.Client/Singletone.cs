@@ -1,6 +1,7 @@
 ﻿namespace LiteRpc.Client
 {
 	using System;
+	using System.Collections.Generic;
 
 	internal class Singletone<T>
 	{
@@ -22,20 +23,23 @@
 
 	internal class Singletone
 	{
-		private static object instance;
+		private static Dictionary<Type, object> instanceContainer = new Dictionary<Type, object>();
 
-		public static object Instance
+		public static object InstanceOf(Type t)
 		{
-			get
+			if (instanceContainer.ContainsKey(t))
 			{
-				return instance;
+				return instanceContainer[t];
+			}
+			else
+			{
+				return null;
 			}
 		}
 
 		public static void SetInstance(object value)
 		{
-			instance = value;
+			instanceContainer[value.GetType()] = value;
 		}
 	}
-
 }
